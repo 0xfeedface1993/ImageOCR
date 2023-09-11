@@ -6,7 +6,7 @@ import PackageDescription
 let cxxSettings: [CXXSetting] = [
     .define("MAGICKCORE_HDRI_ENABLE", to: "1"),
     .define("MAGICKCORE_QUANTUM_DEPTH", to: "16"),
-    .unsafeFlags(["-fno-openmp"], .when(platforms: [.macOS]))
+    .unsafeFlags(["-fno-openmp"], .when(platforms: [.macOS]))
 ]
 
 let swiftSettings: [SwiftSetting] = [
