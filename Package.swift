@@ -3,6 +3,31 @@
 
 import PackageDescription
 
+let cxxSettings: [CXXSetting] = [
+    .define("MAGICKCORE_HDRI_ENABLE", to: "1"),
+    .define("MAGICKCORE_QUANTUM_DEPTH", to: "16"),
+]
+
+let swiftSettings: [SwiftSetting] = [
+    .unsafeFlags(["-I/usr/local/Cellar/imagemagick/7.1.1-15_1/include/ImageMagick-7"],
+                 .when(platforms: [.macOS], configuration: .debug)),
+    .unsafeFlags(["-I/usr/local/include/ImageMagick-7"],
+                 .when(platforms: [.linux], configuration: .debug)),
+]
+
+let linkerSettings: [LinkerSetting] = [
+    .unsafeFlags([
+        "-L/usr/local/Cellar/imagemagick/7.1.1-15_1/lib",
+        "-lMagickWand-7.Q16HDRI",
+        "-lMagickCore-7.Q16HDRI"
+    ], .when(platforms: [.macOS], configuration: .debug)),
+    .unsafeFlags([
+        "-L/usr/local/lib",
+        "-lMagickWand-7.Q16HDRI",
+        "-lMagickCore-7.Q16HDRI"
+    ], .when(platforms: [.linux], configuration: .debug))
+]
+
 let package = Package(
     name: "ImageOCR",
     platforms: [.macOS(.v10_15)],
@@ -27,33 +52,17 @@ let package = Package(
                 "CImageMagick",
                     .product(name: "Logging", package: "swift-log"),
             ],
-            cxxSettings: [
-                .define("MAGICKCORE_HDRI_ENABLE", to: "1"),
-                .define("MAGICKCORE_QUANTUM_DEPTH", to: "16"),
-            ],
-            swiftSettings: [
-                .unsafeFlags(["-I/usr/local/Cellar/imagemagick/7.1.1-15_1/include/ImageMagick-7"],
-                             .when(platforms: [.macOS], configuration: .debug)),
-                .unsafeFlags(["-I/usr/local/include/ImageMagick-7"],
-                             .when(platforms: [.linux], configuration: .debug)),
-            ],
-            linkerSettings: [
-                .unsafeFlags([
-                    "-L/usr/local/Cellar/imagemagick/7.1.1-15_1/lib",
-                    "-lMagickWand-7.Q16HDRI",
-                    "-lMagickCore-7.Q16HDRI"
-                ], .when(platforms: [.macOS], configuration: .debug)),
-                .unsafeFlags([
-                    "-L/usr/local/lib",
-                    "-lMagickWand-7.Q16HDRI",
-                    "-lMagickCore-7.Q16HDRI"
-                ], .when(platforms: [.linux], configuration: .debug))
-            ]
+            cxxSettings: cxxSettings,
+            swiftSettings: swiftSettings,
+            linkerSettings: linkerSettings
         ),
         .testTarget(
             name: "ImageOCRTests",
             dependencies: ["ImageOCR"],
-            resources: [.process("Resources")]
+            resources: [.process("Resources")],
+            cxxSettings: cxxSettings,
+            swiftSettings: swiftSettings,
+            linkerSettings: linkerSettings
         ),
     ]
 )
