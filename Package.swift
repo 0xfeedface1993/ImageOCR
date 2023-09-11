@@ -11,8 +11,7 @@ let cxxSettings: [CXXSetting] = [
 
 let cSettings: [CSetting] = [
     .define("MAGICKCORE_HDRI_ENABLE", to: "1"),
-    .define("MAGICKCORE_QUANTUM_DEPTH", to: "16"),
-    .unsafeFlags(["-fno-openmp"], .when(platforms: [.macOS]))
+    .define("MAGICKCORE_QUANTUM_DEPTH", to: "16")
 ]
 
 let swiftSettings: [SwiftSetting] = [
@@ -32,7 +31,11 @@ let linkerSettings: [LinkerSetting] = [
     .unsafeFlags([
         "-L/usr/local/lib",
         "-lMagickWand-7.Q16HDRI",
-        "-lMagickCore-7.Q16HDRI"
+        "-lMagickCore-7.Q16HDRI",
+        "-lxml2",
+        "-lz",
+        "-lm",
+        "-lpthread"
     ], .when(platforms: [.linux]))
 ]
 
