@@ -5,6 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "ImageOCR",
+    platforms: [.macOS(.v10_15)],
     products: [
         // Products define the executables and libraries a package produces, and make them visible to other packages.
         .library(
@@ -25,29 +26,29 @@ let package = Package(
             dependencies: [
                 "CImageMagick",
                     .product(name: "Logging", package: "swift-log"),
+            ],
+            cxxSettings: [
+                .define("MAGICKCORE_HDRI_ENABLE", to: "1"),
+                .define("MAGICKCORE_QUANTUM_DEPTH", to: "16"),
+            ],
+            swiftSettings: [
+                .unsafeFlags(["-I/usr/local/Cellar/imagemagick/7.1.1-15_1/include/ImageMagick-7"],
+                             .when(platforms: [.macOS], configuration: .debug)),
+                .unsafeFlags(["-I/usr/local/include/ImageMagick-7"],
+                             .when(platforms: [.linux], configuration: .debug)),
+            ],
+            linkerSettings: [
+                .unsafeFlags([
+                    "-L/usr/local/Cellar/imagemagick/7.1.1-15_1/lib",
+                    "-lMagickWand-7.Q16HDRI",
+                    "-lMagickCore-7.Q16HDRI"
+                ], .when(platforms: [.macOS], configuration: .debug)),
+                .unsafeFlags([
+                    "-L/usr/local/lib",
+                    "-lMagickWand-7.Q16HDRI",
+                    "-lMagickCore-7.Q16HDRI"
+                ], .when(platforms: [.linux], configuration: .debug))
             ]
-//            cxxSettings: [
-//                .define("MAGICKCORE_HDRI_ENABLE", to: "1"),
-//                .define("MAGICKCORE_QUANTUM_DEPTH", to: "16"),
-//            ],
-//            swiftSettings: [
-//                .unsafeFlags(["-I/usr/local/Cellar/imagemagick/7.1.1-15_1/include/ImageMagick-7"],
-//                             .when(platforms: [.macOS], configuration: .debug)),
-//                .unsafeFlags(["-I/usr/local/include/ImageMagick-7"],
-//                             .when(platforms: [.linux], configuration: .debug)),
-//            ],
-//            linkerSettings: [
-//                .unsafeFlags([
-//                    "-L/usr/local/Cellar/imagemagick/7.1.1-15_1/lib",
-//                    "-lMagickWand-7.Q16HDRI",
-//                    "-lMagickCore-7.Q16HDRI"
-//                ], .when(platforms: [.macOS], configuration: .debug)),
-//                .unsafeFlags([
-//                    "-L/usr/local/lib",
-//                    "-lMagickWand-7.Q16HDRI",
-//                    "-lMagickCore-7.Q16HDRI"
-//                ], .when(platforms: [.linux], configuration: .debug))
-//            ]
         ),
         .testTarget(
             name: "ImageOCRTests",
