@@ -1,6 +1,9 @@
 import XCTest
 @testable import ImageOCR
+
+#if os(macOS)
 import CoreGraphics
+#endif
 
 final class ImageOCRTests: XCTestCase {
     func testScaleImage() async throws {
