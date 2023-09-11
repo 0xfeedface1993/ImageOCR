@@ -9,10 +9,11 @@ let cxxSettings: [CXXSetting] = [
 ]
 
 let swiftSettings: [SwiftSetting] = [
+//    .unsafeFlags(["-enable-testing"]),
     .unsafeFlags(["-I/usr/local/Cellar/imagemagick/7.1.1-15_1/include/ImageMagick-7"],
-                 .when(platforms: [.macOS], configuration: .debug)),
+                 .when(platforms: [.macOS])),
     .unsafeFlags(["-I/usr/local/include/ImageMagick-7"],
-                 .when(platforms: [.linux], configuration: .debug)),
+                 .when(platforms: [.linux])),
 ]
 
 let linkerSettings: [LinkerSetting] = [
@@ -20,12 +21,12 @@ let linkerSettings: [LinkerSetting] = [
         "-L/usr/local/Cellar/imagemagick/7.1.1-15_1/lib",
         "-lMagickWand-7.Q16HDRI",
         "-lMagickCore-7.Q16HDRI"
-    ], .when(platforms: [.macOS], configuration: .debug)),
+    ], .when(platforms: [.macOS])),
     .unsafeFlags([
         "-L/usr/local/lib",
         "-lMagickWand-7.Q16HDRI",
         "-lMagickCore-7.Q16HDRI"
-    ], .when(platforms: [.linux], configuration: .debug))
+    ], .when(platforms: [.linux]))
 ]
 
 let package = Package(
