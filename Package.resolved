@@ -1,0 +1,41 @@
+{
+  "pins" : [
+    {
+      "identity" : "cimagemagick",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/0xfeedface1993/CImageMagick.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "7f2dacb161328f223597e31d79bea027671c3e8d"
+      }
+    },
+    {
+      "identity" : "libtesseract",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SwiftyTesseract/libtesseract.git",
+      "state" : {
+        "revision" : "214a36e04d740795d7ba2f07c6108944d0136f8a",
+        "version" : "0.2.0"
+      }
+    },
+    {
+      "identity" : "swift-log",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-log.git",
+      "state" : {
+        "revision" : "532d8b529501fb73a2455b179e0bbb6d49b652ed",
+        "version" : "1.5.3"
+      }
+    },
+    {
+      "identity" : "swiftytesseract",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/0xfeedface1993/SwiftyTesseract.git",
+      "state" : {
+        "branch" : "develop",
+        "revision" : "3ac7ac98cb7ce5ac8eb3107b41cdbf9d38899a5c"
+      }
+    }
+  ],
+  "version" : 2
+}

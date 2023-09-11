@@ -25,5 +25,9 @@ final class ImageOCRTests: XCTestCase {
         image = NSImage(data: try await wrapper.data())
         XCTAssertEqual(image?.size.width, size.width)
 #endif
+        let lastImageData = try await wrapper.data()
+        let tesseract = TesseractWrapper(lastImageData, language: .english)
+        let text = try await tesseract.ocr()
+        XCTAssertEqual(text, "QB8C")
     }
 }

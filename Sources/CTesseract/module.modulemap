@@ -1,0 +1,8 @@
+module CTesseract [system] {
+    header "tesseract/capi.h"
+    header "leptonica/allheaders.h"
+    link "tesseract"
+    link "lept"
+    export *
+    module * { export * }
+}
