@@ -9,6 +9,12 @@ let cxxSettings: [CXXSetting] = [
     .unsafeFlags(["-fno-openmp"], .when(platforms: [.macOS]))
 ]
 
+let cSettings: [CSetting] = [
+    .define("MAGICKCORE_HDRI_ENABLE", to: "1"),
+    .define("MAGICKCORE_QUANTUM_DEPTH", to: "16"),
+    .unsafeFlags(["-fno-openmp"], .when(platforms: [.macOS]))
+]
+
 let swiftSettings: [SwiftSetting] = [
 //    .unsafeFlags(["-enable-testing"]),
     .unsafeFlags(["-I/usr/local/Cellar/imagemagick/7.1.1-15_1/include/ImageMagick-7"],
@@ -59,6 +65,7 @@ let package = Package(
                     .product(name: "SwiftyTesseract", package: "SwiftyTesseract")
             ],
             resources: [.copy("Resources/tessdata")],
+            cSettings: cSettings,
             cxxSettings: cxxSettings,
             swiftSettings: swiftSettings,
             linkerSettings: linkerSettings
@@ -67,6 +74,7 @@ let package = Package(
             name: "ImageOCRTests",
             dependencies: ["ImageOCR"],
             resources: [.process("Resources")],
+            cSettings: cSettings,
             cxxSettings: cxxSettings,
             swiftSettings: swiftSettings,
             linkerSettings: linkerSettings
