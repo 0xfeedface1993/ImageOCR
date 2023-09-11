@@ -31,10 +31,9 @@ public actor ImageMsgickWrapperActor {
     }
     
     /// 二值化图片
-    /// - Parameter rawPercentage: 阈值，0-1.0，对应0-255
     @discardableResult
-    public func threshold(_ rawPercentage: Double) throws -> Self {
-        try wrapper.threshold(rawPercentage)
+    public func threshold() throws -> Self {
+        try wrapper.threshold()
         return self
     }
     
@@ -82,30 +81,29 @@ public final class ImageMsgickWrapper {
     /// - Parameter times: 放大倍数， 0-1.0
     @discardableResult
     public func scale(_ times: Double) throws -> Self {
+        try readImageIfNot()
+        let factor = fabs(times)
+        let width = Int(ceil(factor * Double(MagickGetImageWidth(wand))))
+        let height = Int(ceil(factor * Double(MagickGetImageHeight(wand))))
         try exceptionWrapper {
-            try readImageIfNot()
-            let factor = fabs(times)
-            let width = Int(ceil(factor * Double(MagickGetImageWidth(wand))))
-            let height = Int(ceil(factor * Double(MagickGetImageHeight(wand))))
-            return MagickResizeImage(wand, width, height, LanczosFilter)
+            MagickResizeImage(wand, width, height, UndefinedFilter)
         }
         return self
     }
     
     /// 二值化图片
-    /// - Parameter rawPercentage: 阈值，0-1.0，对应0-255
     @discardableResult
-    public func threshold(_ rawPercentage: Double) throws -> Self {
+    public func threshold() throws -> Self {
+        try readImageIfNot()
+        
         try exceptionWrapper {
-            let percentage = min(1, max(rawPercentage, 0))
-            let value = 255.0 * Double(percentage)
-            
-            try readImageIfNot()
-            
-            MagickSetColorspace(wand, ImageMagickColorSpace.RGBColorspace.rawValue)
-            
-            return MagickThresholdImage(wand, value)
-        }        
+            MagickAutoThresholdImage(wand, KapurThresholdMethod)
+        }
+        
+        try transformColorspace(.RGBColorspace)
+        try setColorSpace(.RGBColorspace)
+        try setImageType(TrueColorType)
+        
         return self
     }
     
@@ -113,12 +111,9 @@ public final class ImageMsgickWrapper {
     /// - Parameter colorSpace: 需要转换到的色彩空间
     @discardableResult
     public func transformColorspace(_ colorSpace: ImageMagickColorSpace) throws -> Self {
+        try readImageIfNot()
         try exceptionWrapper {
-            try readImageIfNot()
-            try exceptionWrapper({
-                MagickSetType(wand, TrueColorType)
-            })
-            return MagickTransformImageColorspace(wand, colorSpace.rawValue)
+            MagickTransformImageColorspace(wand, colorSpace.rawValue)
         }
         return self
     }
@@ -126,9 +121,9 @@ public final class ImageMsgickWrapper {
     /// 当前图片数据
     public func data() throws -> Data {
         var data: Data!
+        try readImageIfNot()
+        var size: Int = 0
         try exceptionWrapper {
-            try readImageIfNot()
-            var size: Int = 0
             guard let buffer = MagickGetImageBlob(wand, &size) else {
                 return MagickFalse
             }
@@ -152,6 +147,18 @@ public final class ImageMsgickWrapper {
             }
         }
         return location
+    }
+    
+    func setColorSpace(_ colorSpace: ImageMagickColorSpace = .RGBColorspace) throws {
+        try exceptionWrapper({
+            MagickSetColorspace(wand, colorSpace.rawValue)
+        })
+    }
+    
+    func setImageType(_ imageType: ImageType) throws {
+        try exceptionWrapper({
+            MagickSetType(wand, imageType)
+        })
     }
     
     private func exceptionWrapper(_ action: () throws -> MagickBooleanType) throws {
