@@ -8,14 +8,15 @@ import CoreGraphics
 final class ImageOCRTests: XCTestCase {
     func testScaleImage() async throws {
         let fileURL = Bundle.module.url(forResource: "QB8C", withExtension: "png")!
+        let data = try Data(contentsOf: fileURL)
         let size = CGSize(width: 58, height: 22)
-        let wrapper = ImageMsgickWrapperActor(fileURL)
+        let wrapper = ImageMsgickWrapperActor(data)
         
         let originImageData = try await wrapper.data()
         try await wrapper.scale(2)
         
 #if os(macOS)
-        var image = NSImage(data: try await wrapper.data())
+        let image = NSImage(data: try await wrapper.data())
         XCTAssertEqual(image?.size.width, size.width * 2)
 #endif
         try await wrapper.threshold()

@@ -2,7 +2,7 @@ import Foundation
 import CImageMagick
 import Logging
 
-fileprivate let logger = Logger(label: "com.image.magick.wrapper")
+internal let logger = Logger(label: "com.image.magick.wrapper")
 
 struct ImageMagickError: Error {
     let description: String
@@ -12,62 +12,18 @@ struct ImageMagickError: Error {
 
 enum InnerError: Error {
     case imageMagickExecption
-}
-
-@available(macOS 10.15.0, iOS 13, *)
-public actor ImageMsgickWrapperActor {
-    private let wrapper: ImageMsgickWrapper
-    
-    public init(_ fileURL: URL) {
-        self.wrapper = ImageMsgickWrapper(fileURL)
-    }
-    
-    /// 放大缩小图片
-    /// - Parameter times: 放大倍数， 0-1.0
-    @discardableResult
-    public func scale(_ times: Double) throws -> Self {
-        try wrapper.scale(times)
-        return self
-    }
-    
-    /// 二值化图片
-    @discardableResult
-    public func threshold() throws -> Self {
-        try wrapper.threshold()
-        return self
-    }
-    
-    /// 转换色彩空间
-    /// - Parameter colorSpace: 需要转换到的色彩空间
-    @discardableResult
-    public func transformColorspace(_ colorSpace: ImageMagickColorSpace) throws -> Self {
-        try wrapper.transformColorspace(colorSpace)
-        return self
-    }
-    
-    /// 保存图片文件
-    /// - Parameter location: 新文件路径
-    /// - Returns: 新文件路径
-    @discardableResult
-    public func export(to location: URL) throws -> URL {
-        try wrapper.export(to: location)
-    }
-    
-    /// 当前图片数据
-    public func data() throws -> Data {
-        try wrapper.data()
-    }
+    case wandInvalid
 }
 
 public final class ImageMsgickWrapper {
     private var wand: OpaquePointer?
-    public let fileURL: URL
+    public let source: ImageSourceProvider
     private var imageLoaded = false
     
-    public init(_ fileURL: URL) {
+    public init(_ source: ImageSourceProvider) {
         MagickWandGenesis()
         self.wand = NewMagickWand()
-        self.fileURL = fileURL
+        self.source = source
     }
     
     deinit {
@@ -162,42 +118,29 @@ public final class ImageMsgickWrapper {
     }
     
     private func exceptionWrapper(_ action: () throws -> MagickBooleanType) throws {
-        do {
-            let status = try action()
-            if status == MagickFalse {
-                let exceptionType = UnsafeMutablePointer<ExceptionType>.allocate(capacity: 1)
-                if let exception = MagickGetException(wand, exceptionType) {
-                    logger.info("image magick execption exists: \(exception), throw error")
-                    throw ImageMagickError(description: String(cString: exception), type: .init(exceptionType.pointee), code: -1)
-                }
-                logger.info("no imageMagickExecption exists, not throw any error")
-            }
-        } catch {
-            throw error
+        guard let wand = wand else {
+            throw InnerError.wandInvalid
         }
+        
+        try ImageOCR.exceptionWrapper(wand, action: action)
     }
     
     private func readImageIfNot() throws {
         if imageLoaded {
-            logger.info("image already read \(fileURL)")
+            logger.info("image already read \(source)")
             return
         }
         
-        try exceptionWrapper {
-            try fileURL.withUnsafeFileSystemRepresentation {
-                guard let pointer = $0 else {
-                    throw ImageMagickError(description: "access file \(fileURL) failed.", type: .invalidFileSystemRepresentation(fileURL), code: -2)
-                }
-                
-                let status = MagickReadImage(wand, pointer)
-                guard status == MagickTrue else {
-                    imageLoaded = false
-                    return status
-                }
-                imageLoaded = true
-                return status
-            }
+        guard let wand = wand else {
+            throw InnerError.wandInvalid
+        }
+        
+        do {
+            try source.load(from: wand)
+            imageLoaded = true
+        } catch {
+            imageLoaded = false
+            throw error
         }
     }
 }
-
