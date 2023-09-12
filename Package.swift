@@ -6,7 +6,7 @@ import PackageDescription
 let cxxSettings: [CXXSetting] = [
     .define("MAGICKCORE_HDRI_ENABLE", to: "1"),
     .define("MAGICKCORE_QUANTUM_DEPTH", to: "16"),
-    .unsafeFlags(["-fno-openmp"], .when(platforms: [.macOS]))
+    .unsafeFlags(["-fno-openmp"], .when(platforms: [.macOS], configuration: .debug))
 ]
 
 let cSettings: [CSetting] = [
@@ -17,9 +17,9 @@ let cSettings: [CSetting] = [
 let swiftSettings: [SwiftSetting] = [
 //    .unsafeFlags(["-enable-testing"]),
     .unsafeFlags(["-I/usr/local/Cellar/imagemagick/7.1.1-15_1/include/ImageMagick-7"],
-                 .when(platforms: [.macOS])),
+                 .when(platforms: [.macOS], configuration: .debug)),
     .unsafeFlags(["-I/usr/local/include/ImageMagick-7"],
-                 .when(platforms: [.linux])),
+                 .when(platforms: [.linux], configuration: .debug)),
 ]
 
 let linkerSettings: [LinkerSetting] = [
@@ -27,7 +27,7 @@ let linkerSettings: [LinkerSetting] = [
         "-L/usr/local/Cellar/imagemagick/7.1.1-15_1/lib",
         "-lMagickWand-7.Q16HDRI",
         "-lMagickCore-7.Q16HDRI"
-    ], .when(platforms: [.macOS])),
+    ], .when(platforms: [.macOS], configuration: .debug)),
     .unsafeFlags([
         "-L/usr/local/lib",
         "-lMagickWand-7.Q16HDRI",
@@ -36,7 +36,7 @@ let linkerSettings: [LinkerSetting] = [
         "-lz",
         "-lm",
         "-lpthread"
-    ], .when(platforms: [.linux]))
+    ], .when(platforms: [.linux], configuration: .debug))
 ]
 
 let package = Package(
