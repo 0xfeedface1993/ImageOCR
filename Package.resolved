@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/0xfeedface1993/CImageMagick.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "7f2dacb161328f223597e31d79bea027671c3e8d"
+        "revision" : "014e9cb345d6fb540c74171f251a14d6f0b20d05",
+        "version" : "0.0.2"
       }
     },
     {
@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/0xfeedface1993/SwiftyTesseract.git",
       "state" : {
-        "branch" : "develop",
-        "revision" : "3ac7ac98cb7ce5ac8eb3107b41cdbf9d38899a5c"
+        "revision" : "3ac7ac98cb7ce5ac8eb3107b41cdbf9d38899a5c",
+        "version" : "0.0.1"
       }
     }
   ],
