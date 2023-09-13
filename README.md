@@ -38,5 +38,5 @@ sudo apt-get install libtesseract-dev libleptonica-dev
 # Testing
 ```sh
 # CXXSttings not working
-swift test -Xcc -DMAGICKCORE_HDRI_ENABLE=1 -Xcc -DMAGICKCORE_QUANTUM_DEPTH=16
+swift test -Xcc -DMAGICKCORE_HDRI_ENABLE=1 -Xcc -DMAGICKCORE_QUANTUM_DEPTH=16 -Xcc -I/usr/local/include/ImageMagick-7
 ```
