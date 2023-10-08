@@ -28,9 +28,7 @@ public final class ImageMsgickWrapper {
     
     deinit {
         logger.info("ImageMsgickWrapper deinit")
-        if let wand = self.wand {
-            DestroyMagickWand(wand)
-        }
+        DestroyMagickWand(wand)
         MagickWandTerminus()
     }
     
@@ -85,6 +83,7 @@ public final class ImageMsgickWrapper {
                 return MagickFalse
             }
             data = Data(bytes: buffer, count: size)
+            MagickRelinquishMemory(buffer)
             return MagickTrue
         }
         return data
