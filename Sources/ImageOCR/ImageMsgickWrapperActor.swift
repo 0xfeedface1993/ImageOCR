@@ -16,7 +16,12 @@ public actor ImageMsgickWrapperActor {
     public init(_ source: ImageSourceProvider) {
         self.wrapper = ImageMsgickWrapper(source)
     }
+    
+    public func clear() {
+        self.wrapper = nil
+    }
 
+    @discardableResult
     public func source(_ value: ImageSourceProvider) -> Self {
         wrapper = ImageMsgickWrapper(value)
         return self
