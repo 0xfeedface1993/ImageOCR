@@ -27,6 +27,7 @@ public final class ImageMsgickWrapper {
     }
     
     deinit {
+        logger.info("ImageMsgickWrapper deinit")
         if let wand = self.wand {
             DestroyMagickWand(wand)
         }
