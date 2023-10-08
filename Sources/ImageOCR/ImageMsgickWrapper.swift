@@ -17,7 +17,7 @@ enum InnerError: Error {
 
 public final class ImageMsgickWrapper {
     private var wand: OpaquePointer?
-    public let source: ImageSourceProvider
+    public var source: ImageSourceProvider
     private var imageLoaded = false
     
     public init(_ source: ImageSourceProvider) {
@@ -30,6 +30,16 @@ public final class ImageMsgickWrapper {
         logger.info("ImageMsgickWrapper deinit")
         DestroyMagickWand(wand)
         MagickWandTerminus()
+    }
+    
+    public func clear() {
+        ClearMagickWand(wand)
+    }
+    
+    @discardableResult
+    public func source(_ value: ImageSourceProvider) -> Self {
+        source = value
+        return self
     }
     
     /// 放大缩小图片
