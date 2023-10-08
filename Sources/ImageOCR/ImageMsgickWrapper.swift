@@ -34,11 +34,13 @@ public final class ImageMsgickWrapper {
     
     public func clear() {
         ClearMagickWand(wand)
+        imageLoaded = false
     }
     
     @discardableResult
     public func source(_ value: ImageSourceProvider) -> Self {
         source = value
+        imageLoaded = false
         return self
     }
     
